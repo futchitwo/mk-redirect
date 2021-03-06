@@ -1,8 +1,23 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
   <head>
+    <script>
+      async function main(){
+        let params = (new URL(document.location)).searchParams;
+        if(params === {}) return;
+        let dest = params.get('dest');
+        let uri = params.get('uri');
+        await fetch(`https://${dest}/api/ap/show`, {
+          method: "POST",
+          body: { uri: uri }
+        }).then(responce => {
+          
+        })
+      }
+      main();
+    </script>
   </head>
   <body>
-    test
+    momo
   </body>
 </html>
