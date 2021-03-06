@@ -5,14 +5,14 @@
       async function main(){
         let params = (new URL(document.location)).searchParams;
         if(params === {}) return;
-        let dest = params.get('dest');
-        let uri = params.get('uri');
-        await fetch(`https://${dest}/api/ap/show`, {
+        const dest = params.get('dest');
+        const uri = params.get('uri');
+        const res = await fetch(`https://${dest}/api/ap/show`, {
           method: "POST",
           body: { uri: uri }
-        }).then(responce => {
-          
         })
+        res = await res.json();
+        console.log("https://" + dest + "/notes/" + res.object.id);
       }
       main();
     </script>
