@@ -10,8 +10,8 @@
         console.log("dest: "+dest+" uri: "+uri);
         const res = await fetch(`https://${dest}/api/ap/show`, {
           method: "POST",
-          body: { uri: uri }
-        })
+          body: JSON.stringify({ uri: uri })
+        });
         res = await res.json();
         console.log("https://" + dest + "/notes/" + res.object.id);
       }
