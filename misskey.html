@@ -12,8 +12,8 @@
           method: "POST",
           body: JSON.stringify({ uri: uri })
         });
-        res = await res.json();
-        console.log("https://" + dest + "/notes/" + res.object.id);
+        const resjson = await res.json();
+        console.log("https://" + dest + "/notes/" + resjson.object.id);
       }
       main();
     </script>
