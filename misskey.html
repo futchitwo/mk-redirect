@@ -14,7 +14,7 @@
         });
         const resjson = await res.json();
         console.log("https://" + dest + "/notes/" + resjson.object.id);
-        location.href("https://" + dest + "/notes/" + resjson.object.id);
+        location.href = ("https://" + dest + "/notes/" + resjson.object.id);
       }
       main();
     </script>
