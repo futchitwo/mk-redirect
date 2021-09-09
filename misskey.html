@@ -32,7 +32,7 @@
           const resjson = await res.json();
           
           const redirectUrl = "https://" + dest + "/notes/" + resjson.object.id;
-          progressText.innerText = "照会しました。自動的にリダイレクトします。";
+          progressText.innerText = "照会が完了しました。自動的にリダイレクトします。";
           linkHtml.innerText = redirectUrl;
           linkHtml.setAttribute("href", redirectUrl);
           location.replace(redirectUrl);
