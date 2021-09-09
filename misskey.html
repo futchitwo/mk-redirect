@@ -33,8 +33,8 @@
           
           const redirectUrl = "https://" + dest + "/notes/" + resjson.object.id;
           progressText.innerText = "照会しました。自動的にリダイレクトします。";
-          a.innerText = redirectUrl;
-          a.setAttribute("href", redirectUrl);
+          linkHtml.innerText = redirectUrl;
+          linkHtml.setAttribute("href", redirectUrl);
           location.replace(redirectUrl);
         }catch(err){
           progressText.innerText = "照会に失敗しました：" + err;
