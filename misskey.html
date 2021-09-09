@@ -1,25 +1,46 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>連合に照会</title>
+    <style>
+      *{
+        background:#ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <p>連合に照会します。</p>
+    <a></a>
     <script>
+      const progressText = document.querySelector("p");
+      const linkHtml = document.querySelector("a");
       async function main(){
-        let params = (new URL(document.location)).searchParams;
-        if(params === {}) return;
-        const dest = params.get('dest');
-        const uri = decodeURI(params.get('uri'));
-        console.log("dest: "+dest+" uri: "+uri);
-        const res = await fetch(`https://${dest}/api/ap/show`, {
-          method: "POST",
-          body: JSON.stringify({ uri: uri })
-        });
-        const resjson = await res.json();
-        console.log("https://" + dest + "/notes/" + resjson.object.id);
-        location.href = ("https://" + dest + "/notes/" + resjson.object.id);
+        try{
+          const params = new URL(document.location).searchParams;
+          if(params === {}) throw "パラメーターが指定されていません。";
+          
+          const dest = params.get('dest');
+          const uri = decodeURI(params.get('uri'));
+          console.log("dest: "+dest+" uri: "+uri);
+          if(!dest || !uri) throw "適切なパラメーターが指定されていません。";
+          
+          progressText.innerText = "連合に照会中......";
+          const res = await fetch(`https://${dest}/api/ap/show`, {
+            method: "POST",
+            body: JSON.stringify({ uri: uri })
+          });
+          const resjson = await res.json();
+          
+          const redirectUrl = "https://" + dest + "/notes/" + resjson.object.id;
+          progressText.innerText = "照会しました。自動的にリダイレクトします。";
+          a.innerText = redirectUrl;
+          a.setAttribute("href", redirectUrl);
+          location.replace(redirectUrl);
+        }catch(err){
+          progressText.innerText = "照会に失敗しました：" + err;
+        }
       }
       main();
     </script>
-  </head>
-  <body>
-    連合に照会中………
   </body>
 </html>
