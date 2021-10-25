@@ -9,11 +9,20 @@
     </style>
   </head>
   <body>
-    <p>連合に照会します。</p>
-    <a></a>
+    <p id="progresstext">連合に照会します。</p>
+    <a id="statuslink"></a>
+    <hr />
+    <p>
+      Plugin source: 
+      <a href="https://misskey.io/@hakohako_f2/pages/open-in-other-instance">misskey.io/@hakohako_f2/pages/open-in-other-instance</a>
+    </p>
+    <p>
+      Redirect page source: 
+      <a href="https://github.com/futchitwo/mk-redirect">github.com/futchitwo/mk-redirect</a>
+    </p>
     <script>
-      const progressText = document.querySelector("p");
-      const linkHtml = document.querySelector("a");
+      const progressText = document.querySelector("#progresstext");
+      const linkHtml = document.querySelector("#statuslink");
       async function main(){
         try{
           const params = new URL(document.location).searchParams;
