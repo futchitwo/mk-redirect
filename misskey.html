@@ -21,13 +21,14 @@
           
           const dest = params.get('dest');
           const uri = decodeURI(params.get('uri'));
+          const i = params.get('i');
           console.log("dest: "+dest+" uri: "+uri);
           if(!dest || !uri) throw "適切なパラメーターが指定されていません。";
           
           progressText.innerText = "連合に照会中......";
           const res = await fetch(`https://${dest}/api/ap/show`, {
             method: "POST",
-            body: JSON.stringify({ uri: uri })
+            body: JSON.stringify({ uri: uri, i: i })
           });
           const resjson = await res.json();
           
