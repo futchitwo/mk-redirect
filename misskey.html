@@ -11,6 +11,14 @@
   <body>
     <p id="progresstext">連合に照会します。</p>
     <a id="statuslink"></a>
+    <div id="register-token" style="display: none;">
+      <p>転送先インスタンス(<var id="register-dist"></var>)のノート検索用アクセストークンが登録されていません。<br/>以下のリンクより連携をお願いします。</p>
+      <a id="registerlink-mi12">Misskey v12系</a> 
+      <a id="registerlink-mi10">Misskey v10系</a> 
+    </div>
+    <div id="delete-token" style="display: none;">
+      <button id="delete-token-button"></button>
+    </div>
     <hr />
     <p>
       Plugin source: 
@@ -23,6 +31,8 @@
     <script>
       const progressText = document.querySelector("#progresstext");
       const linkHtml = document.querySelector("#statuslink");
+      //const showRegisterTokenDiv = () => document.querySelector("#register-token").setAttribute("style", "display:unset");
+      //const showDeleteTokenDiv = (dest) => document.querySelector("#")
       async function main(){
         try{
           const params = new URL(document.location).searchParams;
@@ -30,7 +40,7 @@
           
           const dest = params.get('dest');
           const uri = decodeURI(params.get('uri'));
-          const i = params.get('i');
+          let i = params.get('i') || localStorage.getItem(dest);
           console.log("dest: "+dest+" uri: "+uri);
           if(!dest || !uri) throw "適切なパラメーターが指定されていません。";
           
