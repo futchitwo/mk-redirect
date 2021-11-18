@@ -7,6 +7,7 @@
         background:#ccc;
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/uuid@8.3.2/dist/umd/uuidv4.min.js" integrity="sha256-S7uAbnQ+Ibyfl7YvwFZOCIm38x7p1Iw/K4XU4A/mKcw=" crossorigin="anonymous"></script>
   </head>
   <body>
     <p id="progresstext">連合に照会します。</p>
@@ -15,6 +16,7 @@
       <p>転送先インスタンス(<var id="register-dist"></var>)のノート検索用アクセストークンが登録されていません。<br/>以下のリンクより連携をお願いします。</p>
       <a id="registerlink-mi12">Misskey v12系</a> 
       <a id="registerlink-mi10">Misskey v10系</a> 
+      
     </div>
     <div id="delete-token" style="display: none;">
       <button id="delete-token-button"></button>
@@ -31,19 +33,24 @@
     <script>
       const progressText = document.querySelector("#progresstext");
       const linkHtml = document.querySelector("#statuslink");
-      //const showRegisterTokenDiv = () => document.querySelector("#register-token").setAttribute("style", "display:unset");
-      //const showDeleteTokenDiv = (dest) => document.querySelector("#")
+      
       async function main(){
         try{
           const params = new URL(document.location).searchParams;
           if(params === {}) throw "パラメーターが指定されていません。";
           
+          requestMiauth(params);
+
           const dest = params.get('dest');
           const uri = decodeURI(params.get('uri'));
           let i = params.get('i') || localStorage.getItem(dest);
           console.log("dest: "+dest+" uri: "+uri);
           if(!dest || !uri) throw "適切なパラメーターが指定されていません。";
-          
+          if(!i){
+            showRegisterTokenDiv(dest);
+            throw "アクセストークンが登録されていません。";
+          }
+
           progressText.innerText = "連合に照会中......";
           const res = await fetch(`https://${dest}/api/ap/show`, {
             method: "POST",
@@ -60,6 +67,35 @@
           progressText.innerText = "照会に失敗しました：" + err;
         }
       }
+
+      
+      const showRegisterTokenDiv = (dest) => {
+        document.querySelector("#register-token").setAttribute("style", "display:unset");
+        const mi12Url = `https://${dest}/miauth/${uuidv4()}?name=mk-redirect&callback=${encodeURIComponent(location.href + "&")}`;
+        document.querySelector("#registerlink-mi12").setAttribute("href", mi12Url);
+        document.querySelector("#registerlink-mi10").setAttribute("style", "display:unset");
+      }
+      
+      //const showDeleteTokenDiv = (dest) => document.querySelector("#")
+
+      const requestMiauth = async (params) => {
+        const dest = params.get('dest');
+        const sessionId = params.get('session') || params.get('?session');
+        if (sessionId != null && dest != null){
+          const res = await fetch(`https://${dest}/api/miauth/${sessionId}/check`, {
+            method: "POST",
+            body: JSON.stringify({})
+          });
+          const resjson = await res.json();
+
+          localStorage.setItem(dest,resjson.object.token);
+        }
+      }
+
+      const setTokenManually = () => {
+
+      }
+
       main();
     </script>
   </body>
