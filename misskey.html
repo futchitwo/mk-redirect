@@ -58,6 +58,8 @@
           });
           const resjson = await res.json();
           
+          if(!res.ok) throw resjson.error.message;
+
           const redirectUrl = "https://" + dest + "/notes/" + resjson.object.id;
           progressText.innerText = "照会が完了しました。自動的にリダイレクトします。";
           linkHtml.innerText = redirectUrl;
@@ -71,6 +73,7 @@
       
       const showRegisterTokenDiv = (dest) => {
         document.querySelector("#register-token").setAttribute("style", "display:unset");
+        document.querySelector("#register-dist").innerText = dest;
         const mi12Url = `https://${dest}/miauth/${uuidv4()}?name=mk-redirect&callback=${encodeURIComponent(location.href + "&")}`;
         document.querySelector("#registerlink-mi12").setAttribute("href", mi12Url);
         document.querySelector("#registerlink-mi10").setAttribute("style", "display:unset");
