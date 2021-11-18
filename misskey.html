@@ -16,7 +16,11 @@
       <p>転送先インスタンス(<var id="register-dist"></var>)のノート検索用アクセストークンが登録されていません。<br/>以下のリンクより連携をお願いします。</p>
       <a id="registerlink-mi12">Misskey v12系</a> 
       <a id="registerlink-mi10">Misskey v10系</a> 
-      
+      <p>または、手動でトークンを追加できます。</p>
+      <form>
+        <input type="text" name="token" id="registermanually-token" required autocomplete="off" placeholder="token">
+        <input type="submit" id="registermanually-button" value="追加">
+      </form>
     </div>
     <div id="delete-token" style="display: none;">
       <button id="delete-token-button"></button>
@@ -34,6 +38,7 @@
       const progressText = document.querySelector("#progresstext");
       const linkHtml = document.querySelector("#statuslink");
       let dest;
+      let i;
 
       async function main(){
         try{
@@ -44,7 +49,7 @@
 
           dest = params.get('dest');
           const uri = decodeURI(params.get('uri'));
-          let i = params.get('i') || localStorage.getItem(dest);
+          i = params.get('i') || localStorage.getItem(dest);
           console.log("dest: "+dest+" uri: "+uri);
           if(!dest || !uri) throw "適切なパラメーターが指定されていません。";
           if(!i){
@@ -68,21 +73,27 @@
           location.replace(redirectUrl);
         }catch(err){
           progressText.innerText = "照会に失敗しました：" + err;
-          if(dest)showDeleteTokenDiv(dest);
+          if(dest && i)showDeleteTokenDiv(dest);
         }
       }
 
       
       const showRegisterTokenDiv = (dest) => {
-        document.querySelector("#register-token").setAttribute("style", "display:unset");
+        document.querySelector("#register-token").setAttribute("style", "display:block");
         document.querySelector("#register-dist").innerText = dest;
         const mi12Url = `https://${dest}/miauth/${uuidv4()}?name=mk-redirect&callback=${encodeURIComponent(location.href + "&")}`;
         document.querySelector("#registerlink-mi12").setAttribute("href", mi12Url);
-        document.querySelector("#registerlink-mi10").setAttribute("style", "display:unset");
+        document.querySelector("#registerlink-mi10").setAttribute("style", "");
+
+        document.querySelector('#registermanually-button').addEventListener("click", () => {
+          const token = document.querySelector('#registermanually-token').value;
+          localStorage.setItem(dest, token);
+          location.reload();
+        });
       }
       
       const showDeleteTokenDiv = (dest) => {
-        document.querySelector("#delete-token").setAttribute("style", "display:unset");
+        document.querySelector("#delete-token").setAttribute("style", "display:block");
         const button = document.querySelector("#delete-token-button");
         button.innerText = dest + "のトークンを削除";
 
@@ -104,10 +115,6 @@
 
           localStorage.setItem(dest,resjson.token);
         }
-      }
-
-      const setTokenManually = () => {
-
       }
 
       main();
