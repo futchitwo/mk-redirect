@@ -23,6 +23,7 @@
       </form>
     </div>
     <div id="delete-token" style="display: none;">
+      <p>認証系のエラーの場合はトークンをリセットすることで直る場合があります。</p>
       <button id="delete-token-button"></button>
     </div>
     <hr />
@@ -58,15 +59,8 @@
           }
 
           progressText.innerText = "連合に照会中......";
-          const res = await fetch(`https://${dest}/api/ap/show`, {
-            method: "POST",
-            body: JSON.stringify({ uri: uri, i: i })
-          });
-          const resjson = await res.json();
-          
-          if(!res.ok) throw resjson.error.message;
+          const redirectUrl = await redirectToMisskey(dest,uri,i);
 
-          const redirectUrl = "https://" + dest + "/notes/" + resjson.object.id;
           progressText.innerText = "照会が完了しました。自動的にリダイレクトします。";
           linkHtml.innerText = redirectUrl;
           linkHtml.setAttribute("href", redirectUrl);
@@ -101,6 +95,18 @@
           localStorage.removeItem(dest);
           location.reload();
         });
+      }
+      
+      const redirectToMisskey = async (dest, uri, i) => {
+        const res = await fetch(`https://${dest}/api/ap/show`, {
+          method: "POST",
+          body: JSON.stringify({ uri: uri, i: i })
+        });
+        const resjson = await res.json();
+        
+        if(!res.ok) throw resjson.error.message;
+
+        return "https://" + dest + "/notes/" + resjson.object.id;
       }
 
       const requestMiauth = async (params) => {
