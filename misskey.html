@@ -33,7 +33,8 @@
     <script>
       const progressText = document.querySelector("#progresstext");
       const linkHtml = document.querySelector("#statuslink");
-      
+      let dest;
+
       async function main(){
         try{
           const params = new URL(document.location).searchParams;
@@ -41,7 +42,7 @@
           
           await requestMiauth(params);
 
-          const dest = params.get('dest');
+          dest = params.get('dest');
           const uri = decodeURI(params.get('uri'));
           let i = params.get('i') || localStorage.getItem(dest);
           console.log("dest: "+dest+" uri: "+uri);
@@ -67,6 +68,7 @@
           location.replace(redirectUrl);
         }catch(err){
           progressText.innerText = "照会に失敗しました：" + err;
+          if(dest)showDeleteTokenDiv(dest);
         }
       }
 
@@ -79,7 +81,16 @@
         document.querySelector("#registerlink-mi10").setAttribute("style", "display:unset");
       }
       
-      //const showDeleteTokenDiv = (dest) => document.querySelector("#")
+      const showDeleteTokenDiv = (dest) => {
+        document.querySelector("#delete-token").setAttribute("style", "display:unset");
+        const button = document.querySelector("#delete-token-button");
+        button.innerText = dest + "のトークンを削除";
+
+        button.addEventListener("click", () => {
+          localStorage.removeItem(dest);
+          location.reload();
+        });
+      }
 
       const requestMiauth = async (params) => {
         const dest = params.get('dest');
