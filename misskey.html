@@ -39,7 +39,7 @@
           const params = new URL(document.location).searchParams;
           if(params === {}) throw "パラメーターが指定されていません。";
           
-          requestMiauth(params);
+          await requestMiauth(params);
 
           const dest = params.get('dest');
           const uri = decodeURI(params.get('uri'));
