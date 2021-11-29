@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>連合に照会</title>
+    <style>
+      *{
+        background:#ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <p id="progresstext">連合に照会します。</p>
+    <a id="statuslink"></a>
+    <div id="register-token" style="display: none;">
+      <p>転送先インスタンス(<var id="register-dist"></var>)のノート検索用アクセストークンが登録されていません。<br/>
+        Mastodonの場合は以下のリンクよりトークン作成をお願いします。<br/>
+        <code>read:search</code> の権限が必要です。
+    </p>
+      <a id="gentokenlink-mstdn" target="_blank" rel="noopener noreferrer">Mastodon</a> 
+      <form>
+        <input type="text" name="token" id="registermanually-token" required autocomplete="off" placeholder="token">
+        <input type="submit" id="registermanually-button" value="追加">
+      </form>
+    </div>
+    <div id="delete-token" style="display: none;">
+      <p>認証系のエラーの場合はトークンをリセットすることで直る場合があります。</p>
+      <button id="delete-token-button"></button>
+    </div>
+    <hr />
+    <p>
+      Plugin source: 
+      <a href="https://misskey.io/@hakohako_f2/pages/open-in-other-instance">misskey.io/@hakohako_f2/pages/open-in-other-instance</a>
+    </p>
+    <p>
+      Redirect page source: 
+      <a href="https://github.com/futchitwo/mk-redirect">github.com/futchitwo/mk-redirect</a>
+    </p>
+    <script>
+      const progressText = document.querySelector("#progresstext");
+      const linkHtml = document.querySelector("#statuslink");
+      let dest;
+      let i;
+
+      async function main(){
+        try{
+          const params = new URL(document.location).searchParams;
+          if(params === {}) throw "パラメーターが指定されていません。";
+
+          dest = params.get('dest');
+          const uri = decodeURI(params.get('uri'));
+          i = params.get('i') || localStorage.getItem(dest);
+          console.log("dest: "+dest+" uri: "+uri);
+          if(!dest || !uri) throw "適切なパラメーターが指定されていません。";
+          if(!i){
+            showRegisterTokenDiv(dest);
+            //throw "アクセストークンが登録されていません。";
+          }
+
+          progressText.innerText = "連合に照会中......";
+          const redirectUrl = await redirectToMastodonV2(dest,uri,i);
+
+          progressText.innerText = "照会が完了しました。自動的にリダイレクトします。";
+          linkHtml.innerText = redirectUrl;
+          linkHtml.setAttribute("href", redirectUrl);
+          location.replace(redirectUrl);
+        }catch(err){
+          progressText.innerText = "照会に失敗しました：" + err;
+          if(dest && i)showDeleteTokenDiv(dest);
+        }
+      }
+
+      
+      const showRegisterTokenDiv = (dest) => {
+        document.querySelector("#register-token").setAttribute("style", "display:block");
+        document.querySelector("#register-dist").innerText = dest;
+        document.querySelector("#gentokenlink-mstdn").setAttribute("href", `https://${dist}/settings/applications/new`);
+
+        document.querySelector('#registermanually-button').addEventListener("click", () => {
+          const token = document.querySelector('#registermanually-token').value;
+          localStorage.setItem(dest, token);
+          location.reload();
+        });
+      }
+      
+      const showDeleteTokenDiv = (dest) => {
+        document.querySelector("#delete-token").setAttribute("style", "display:block");
+        const button = document.querySelector("#delete-token-button");
+        button.innerText = dest + "のトークンを削除";
+
+        button.addEventListener("click", () => {
+          localStorage.removeItem(dest);
+          location.reload();
+        });
+      }
+      
+      const redirectToMastodonV2 = async (dest, uri, i) => {
+        const res = await fetch(`https://${dest}/api/v2/search?q=${encodeURIComponent(uri)}`, {
+          method: "GET",
+          body: JSON.stringify({ authorization: "Bearer "+i })
+        });
+        const resjson = await res.json();
+        
+        if(!res.ok) throw resjson.error.message;
+
+        return "https://" + dest + "/web/statuses/" + resjson.statuses[0].id;
+      }
+
+      main();
+    </script>
+  </body>
+</html>
