@@ -16,7 +16,7 @@
         Mastodonの場合は以下のリンクよりトークン作成をお願いします。<br/>
         <code>read:search</code> の権限が必要です。
     </p>
-      <a id="gentokenlink-mstdn" target="_blank" rel="noopener noreferrer">Mastodon</a> 
+      <a id="gentokenlink-mstdn" target="_blank" rel="noopener noreferrer">Mastodonトークン作成リンク</a> 
       <form>
         <input type="text" name="token" id="registermanually-token" required autocomplete="off" placeholder="token">
         <input type="submit" id="registermanually-button" value="追加">
@@ -96,7 +96,7 @@
       const redirectToMastodonV2 = async (dest, uri, i) => {
         const res = await fetch(`https://${dest}/api/v2/search?q=${encodeURIComponent(uri)}`, {
           method: "GET",
-          body: JSON.stringify({ authorization: "Bearer "+i })
+          headers: JSON.stringify({ authorization: "Bearer "+i })
         });
         const resjson = await res.json();
         
