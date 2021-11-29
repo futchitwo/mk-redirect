@@ -100,7 +100,7 @@
         });
         const resjson = await res.json();
         
-        if(!res.ok) throw resjson.error.message;
+        if(!res.ok) throw resjson.error;
 
         return "https://" + dest + "/web/statuses/" + resjson.statuses[0].id;
       }
