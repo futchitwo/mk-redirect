@@ -12,7 +12,7 @@
     <p id="progresstext">連合に照会します。</p>
     <a id="statuslink"></a>
     <div id="register-token" style="display: none;">
-      <p>転送先インスタンス(<var id="register-dist"></var>)のノート検索用アクセストークンが登録されていません。<br/>
+      <p>転送先インスタンス(<var id="register-dest"></var>)のノート検索用アクセストークンが登録されていません。<br/>
         Mastodonの場合は以下のリンクよりトークン作成をお願いします。<br/>
         <code>read:search</code> の権限が必要です。
     </p>
@@ -72,8 +72,8 @@
       
       const showRegisterTokenDiv = (dest) => {
         document.querySelector("#register-token").setAttribute("style", "display:block");
-        document.querySelector("#register-dist").innerText = dest;
-        document.querySelector("#gentokenlink-mstdn").setAttribute("href", `https://${dist}/settings/applications/new`);
+        document.querySelector("#register-dest").innerText = dest;
+        document.querySelector("#gentokenlink-mstdn").setAttribute("href", `https://${dest}/settings/applications/new`);
 
         document.querySelector('#registermanually-button').addEventListener("click", () => {
           const token = document.querySelector('#registermanually-token').value;
