@@ -94,7 +94,7 @@
       }
       
       const redirectToMastodonV2 = async (dest, uri, i) => {
-        const res = await fetch(`https://${dest}/api/v2/search?q=${encodeURIComponent(uri)}`, {
+        const res = await fetch(`https://${dest}/api/v2/search?q=${encodeURIComponent(uri)}&resolve=true`, {
           method: "GET",
           headers: { authorization: "Bearer "+i }
         });
