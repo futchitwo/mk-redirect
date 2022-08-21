@@ -21,7 +21,14 @@
         <input type="text" name="token" id="registermanually-token" required autocomplete="off" placeholder="token">
         <input type="button" id="registermanually-button" value="追加">
       </form>
-      <p>トークンはローカルストレージに保存され、転送先インスタンスにノート情報を問い合わせること以外には使用しません。</p>
+      <details>
+        <summary>権限について</summary>
+        <ul>
+          <li>トークンはローカルストレージに保存され、転送先インスタンスにノート情報を問い合わせること以外には使用しません。</li>
+          <li>リンクより連携した場合、「以下の権限を要求します」の欄が空白ですが、これは特別な権限が必要ないためであり、エラーではありません。<br/>どのアクセストークンにも付随する、一般的な検索権限のみ利用します。</li>
+        </ul>
+      </details>
+      
     </div>
     <div id="delete-token" style="display: none;">
       <p>認証系のエラーの場合はトークンをリセットすることで直る場合があります。</p>
@@ -76,7 +83,7 @@
       const showRegisterTokenDiv = (dest) => {
         document.querySelector("#register-token").setAttribute("style", "display:block");
         document.querySelector("#register-dest").innerText = dest;
-        const mi12Url = `https://${dest}/miauth/${uuidv4()}?name=mk-redirect&callback=${encodeURIComponent(location.href + "&")}`;
+        const mi12Url = `https://${dest}/miauth/${uuidv4()}?name=mk-redirect&permission=_&callback=${encodeURIComponent(location.href + "&")}`;
         document.querySelector("#registerlink-mi12").setAttribute("href", mi12Url);
         document.querySelector("#registerlink-mi10").setAttribute("style", "");
 
