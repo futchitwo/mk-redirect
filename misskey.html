@@ -108,6 +108,7 @@
       const redirectToMisskey = async (dest, uri, i) => {
         const res = await fetch(`https://${dest}/api/ap/show`, {
           method: "POST",
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ uri: uri, i: i })
         });
         const resjson = await res.json();
